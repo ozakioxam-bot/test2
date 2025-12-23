@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luna 参加者リスト | 公式</title>
+  <meta name="description" content="イベント参加者リスト（公開プロフィール）。検索・フィルタで気になる参加者を探せます。" />
+
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --panel:#12141c;
+      --panel2:#161a24;
+      --text:#e9ecf1;
+      --muted:#aeb6c4;
+      --brand:#ff4fd8;
+      --brand2:#7c5cff;
+      --line:#23293a;
+      --ok:#33d69f;
+      --warn:#ffcc66;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+      background: radial-gradient(1200px 600px at 15% 10%, rgba(255,79,216,.18), transparent 60%),
+                  radial-gradient(1000px 500px at 80% 20%, rgba(124,92,255,.16), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:28px 18px 60px;}
+    header{
+      display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      padding:16px 0 10px;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: var(--shadow);
+    }
+    .title h1{font-size:18px; margin:0 0 2px;}
+    .title p{margin:0; color:var(--muted); font-size:12px;}
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:10px 12px; background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:999px;
+      color:var(--muted); font-size:12px;
+    }
+
+    .hero{
+      margin-top:10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding:18px;
+      box-shadow: var(--shadow);
+    }
+    .hero h2{margin:0 0 8px; font-size:18px;}
+    .hero p{margin:0; color:var(--muted); line-height:1.6; font-size:13px;}
+    .note{
+      margin-top:12px;
+      display:grid; gap:10px;
+      grid-template-columns: 1fr;
+    }
+    .note .card{
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .note .card strong{display:block; font-size:13px; margin-bottom:6px;}
+    .note .card ul{margin:0; padding-left:18px; color:var(--muted); font-size:12px; line-height:1.7;}
+    @media(min-width: 860px){
+      .note{grid-template-columns: 1.1fr .9fr;}
+    }
+
+    .controls{
+      margin-top:16px;
+      background: var(--panel);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding:14px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .row{
+      display:grid; gap:10px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width: 860px){
+      .controls{gap:12px;}
+      .row{grid-template-columns: 1.4fr .8fr .8fr .8fr;}
+    }
+
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px;}
+    input, select{
+      width:100%;
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      padding:11px 12px;
+      outline:none;
+    }
+    input:focus, select:focus{border-color: rgba(255,79,216,.55); box-shadow: 0 0 0 4px rgba(255,79,216,.12);}
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:2px;}
+    button{
+      background: linear-gradient(135deg, rgba(255,79,216,.95), rgba(124,92,255,.95));
+      color:#fff;
+      border:none;
+      padding:10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+      font-weight:700;
+      font-size:12px;
+    }
+    button.secondary{
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:none;
+      font-weight:600;
+    }
+    button:active{transform: translateY(1px);}
+
+    .meta{
+      margin-top:12px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      color:var(--muted); font-size:12px;
+    }
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media(min-width: 640px){ .grid{grid-template-columns: repeat(2, 1fr);} }
+    @media(min-width: 980px){ .grid{grid-template-columns: repeat(3, 1fr);} }
+
+    .cardP{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding:14px;
+      box-shadow: var(--shadow);
+      display:flex; flex-direction:column; gap:10px;
+      min-height: 165px;
+    }
+    .top{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .name{
+      font-size:14px; font-weight:800; margin:0;
+    }
+    .badges{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+    .badge.ok{border-color: rgba(51,214,159,.35); color: rgba(51,214,159,.95);}
+    .badge.warn{border-color: rgba(255,204,102,.35); color: rgba(255,204,102,.95);}
+    .desc{
+      margin:0;
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.7;
+      display:-webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+      min-height: 68px;
+    }
+    .more{
+      margin-top:auto;
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      font-size:12px; color:var(--muted);
+    }
+    .link{
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      padding:8px 10px;
+      border-radius:12px;
+    }
+
+    /* modal */
+    .modalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.62);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(720px, 100%);
+      background: #0f121a;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.6);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(135deg, rgba(255,79,216,.10), rgba(124,92,255,.08));
+    }
+    .modalHead h3{margin:0; font-size:14px;}
+    .x{
+      border:none; cursor:pointer;
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      padding:8px 10px;
+      border-radius: 12px;
+      font-weight:800;
+    }
+    .modalBody{
+      padding:16px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    .kv{
+      display:grid; grid-template-columns: 120px 1fr;
+      gap:10px;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding:12px;
+      font-size:12px;
+    }
+    .k{color:var(--muted);}
+    .v{color:var(--text); line-height:1.7;}
+    footer{
+      margin-top:26px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.8;
+      border-top:1px solid rgba(255,255,255,.08);
+      padding-top:14px;
+    }
+    .small{font-size:11px; color:var(--muted);}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <h1>Luna 参加者リスト（公開プロフィール）</h1>
+          <p>検索・フィルタで気になる方を見つけやすく</p>
+        </div>
+      </div>
+      <div class="pill" id="eventMeta">開催日：<span id="eventDate">YYYY/MM/DD</span>　/　会場：<span id="eventVenue">会場名</span></div>
+    </header>
+
+    <section class="hero">
+      <h2>このページについて</h2>
+      <p>
+        本ページは、イベントに参加された方のうち「公開プロフィールの掲載に同意した方」のみを掲載しています。
+        当日の交流をスムーズにしたり、イベント後に「話してみたかった」を減らすための仕組みです。
+      </p>
+
+      <div class="note">
+        <div class="card">
+          <strong>注意（必ずお読みください）</strong>
+          <ul>
+            <li>プロフィールの公開は任意です（掲載されない方もいます）。</li>
+            <li>個人を特定できる情報（本名・住所・勤務先・SNS ID 等）の記載はご遠慮ください。</li>
+            <li>このページの内容を無断転載・スクリーンショット共有する行為は禁止です。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <strong>使い方</strong>
+          <ul>
+            <li>検索：名前・一言・タグ（例：初心者、交流したい）を入力</li>
+            <li>絞り込み：性別表記 / ステータス / 並び替え</li>
+            <li>詳細：カードの「プロフィールを見る」</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="検索・フィルタ">
+      <div class="row">
+        <div>
+          <label for="q">検索（名前・タグ・一言）</label>
+          <input id="q" type="search" placeholder="例：初心者 / 話しかけてOK / 緊張してます" />
+        </div>
+        <div>
+          <label for="gender">性別表記</label>
+          <select id="gender">
+            <option value="">すべて</option>
+            <option value="男">男</option>
+            <option value="女">女</option>
+            <option value="MTF">MTF</option>
+            <option value="FTM">FTM</option>
+            <option value="MTX">MTX</option>
+            <option value="FTX">FTX</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+        <div>
+          <label for="status">ステータス</label>
+          <select id="status">
+            <option value="">すべて</option>
+            <option value="はじめて">はじめて参加</option>
+            <option value="常連">常連</option>
+            <option value="話しかけてOK">話しかけてOK</option>
+          </select>
+        </div>
+        <div>
+          <label for="sort">並び替え</label>
+          <select id="sort">
+            <option value="name">名前（A→Z）</option>
+            <option value="new">登録が新しい順</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button id="reset" class="secondary" type="button">条件をリセット</button>
+        <button id="copyLink" class="secondary" type="button">この条件のリンクをコピー</button>
+      </div>
+
+      <div class="meta">
+        <div>表示：<strong id="count">0</strong> 件</div>
+        <div class="small">※掲載内容の修正・削除依頼は主催までご連絡ください</div>
+      </div>
+    </section>
+
+    <main class="grid" id="grid" aria-label="参加者一覧"></main>
+
+    <footer>
+      <div>© Luna Event</div>
+      <div class="small">
+        免責：本ページは参加者同士の交流促進を目的としたものです。掲載情報の正確性・完全性を保証するものではありません。
+      </div>
+    </footer>
+  </div>
+
+  <!-- modal -->
+  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modalHead">
+        <h3 id="modalTitle">プロフィール</h3>
+        <button class="x" id="closeModal" type="button">閉じる</button>
+      </div>
+      <div class="modalBody" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    // ====== ここをあなたのイベント情報に置き換えてください ======
+    const EVENT = {
+      date: "2025/12/XX",
+      venue: "会場名（例：心斎橋◯◯）"
+    };
+
+    // ====== 参加者データ（ここに追加/差し替え） ======
+    // tips:
+    // - id はユニーク（数字でも文字でもOK）
+    // - tags は検索対象になります
+    // - intro は短め推奨（個人特定NG）
+    const PARTICIPANTS = [
+      {
+        id: "001",
+        name: "さき",
+        gender: "女",
+        status: "はじめて",
+        tags: ["初心者", "雑談歓迎", "緊張してます"],
+        intro: "初参加です。ゆるくお話できたら嬉しいです。",
+        updatedAt: "2025-12-20"
+      },
+      {
+        id: "002",
+        name: "れん",
+        gender: "男",
+        status: "話しかけてOK",
+        tags: ["一人参加", "イベント慣れ", "優しめ"],
+        intro: "当日は気軽に声かけてください。おすすめの回り方も案内できます。",
+        updatedAt: "2025-12-21"
+      },
+      {
+        id: "003",
+        name: "みつき",
+        gender: "MTF",
+        status: "常連",
+        tags: ["交流したい", "初心者歓迎", "ゆっくり"],
+        intro: "ペース合わせます。無理なくお話しましょう。",
+        updatedAt: "2025-12-21"
+      }
+    ];
+
+    // ====== UI ======
+    const $ = (s) => document.querySelector(s);
+    const grid = $("#grid");
+    const q = $("#q");
+    const gender = $("#gender");
+    const status = $("#status");
+    const sort = $("#sort");
+    const count = $("#count");
+    const reset = $("#reset");
+    const copyLink = $("#copyLink");
+
+    const modalBack = $("#modalBack");
+    const modalBody = $("#modalBody");
+    const modalTitle = $("#modalTitle");
+    const closeModal = $("#closeModal");
+
+    $("#eventDate").textContent = EVENT.date;
+    $("#eventVenue").textContent = EVENT.venue;
+
+    const norm = (s) => (s ?? "").toString().trim().toLowerCase();
+
+    function getFiltered(){
+      const text = norm(q.value);
+      const g = gender.value;
+      const st = status.value;
+
+      let list = [...PARTICIPANTS];
+
+      if (g) list = list.filter(p => p.gender === g);
+      if (st) list = list.filter(p => p.status === st);
+
+      if (text){
+        list = list.filter(p => {
+          const hay = [
+            p.name, p.gender, p.status,
+            ...(p.tags ?? []),
+            p.intro
+          ].map(norm).join(" ");
+          return hay.includes(text);
+        });
+      }
+
+      const s = sort.value;
+      if (s === "name"){
+        list.sort((a,b) => norm(a.name).localeCompare(norm(b.name), "ja"));
+      } else if (s === "new"){
+        list.sort((a,b) => norm(b.updatedAt).localeCompare(norm(a.updatedAt)));
+      }
+      return list;
+    }
+
+    function badgeClass(text){
+      if (text === "話しかけてOK") return "badge ok";
+      if (text === "はじめて") return "badge warn";
+      return "badge";
+    }
+
+    function render(){
+      const list = getFiltered();
+      count.textContent = list.length;
+
+      grid.innerHTML = list.map(p => `
+        <article class="cardP">
+          <div class="top">
+            <div>
+              <p class="name">${escapeHtml(p.name)}</p>
+              <div class="badges">
+                <span class="badge">${escapeHtml(p.gender)}</span>
+                <span class="${badgeClass(p.status)}">${escapeHtml(p.status)}</span>
+              </div>
+            </div>
+            <span class="badge">ID: ${escapeHtml(p.id)}</span>
+          </div>
+
+          <p class="desc">${escapeHtml(p.intro || "")}</p>
+
+          <div class="badges">
+            ${(p.tags || []).slice(0,6).map(t => `<span class="badge">${escapeHtml(t)}</span>`).join("")}
+          </div>
+
+          <div class="more">
+            <span>更新：${escapeHtml(p.updatedAt || "-")}</span>
+            <a href="#" class="link" data-id="${escapeHtml(p.id)}">プロフィールを見る</a>
+          </div>
+        </article>
+      `).join("");
+
+      grid.querySelectorAll("a[data-id]").forEach(a => {
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          const id = a.getAttribute("data-id");
+          openProfile(id);
+        });
+      });
+    }
+
+    function openProfile(id){
+      const p = PARTICIPANTS.find(x => x.id === id);
+      if (!p) return;
+      modalTitle.textContent = `${p.name} さんのプロフィール`;
+      modalBody.innerHTML = `
+        <div class="kv"><div class="k">表示名</div><div class="v">${escapeHtml(p.name)}</div></div>
+        <div class="kv"><div class="k">性別表記</div><div class="v">${escapeHtml(p.gender)}</div></div>
+        <div class="kv"><div class="k">ステータス</div><div class="v">${escapeHtml(p.status)}</div></div>
+        <div class="kv"><div class="k">タグ</div><div class="v">${(p.tags||[]).map(t=>`<span class="badge" style="margin-right:6px;">${escapeHtml(t)}</span>`).join("") || "-"}</div></div>
+        <div class="kv"><div class="k">ひとこと</div><div class="v">${escapeHtml(p.intro || "-")}</div></div>
+        <div class="kv"><div class="k">更新日</div><div class="v">${escapeHtml(p.updatedAt || "-")}</div></div>
+        <div class="kv"><div class="k">お願い</div><div class="v">個人特定・無断転載は禁止です。お互いに安心できる交流をお願いします。</div></div>
+      `;
+      modalBack.style.display = "flex";
+    }
+
+    function close(){
+      modalBack.style.display = "none";
+      modalBody.innerHTML = "";
+    }
+
+    // URLパラメータで状態復元
+    function loadFromUrl(){
+      const u = new URL(location.href);
+      q.value = u.searchParams.get("q") || "";
+      gender.value = u.searchParams.get("g") || "";
+      status.value = u.searchParams.get("s") || "";
+      sort.value = u.searchParams.get("sort") || "name";
+    }
+    function writeToUrl(){
+      const u = new URL(location.href);
+      const params = u.searchParams;
+      setOrDel(params, "q", q.value);
+      setOrDel(params, "g", gender.value);
+      setOrDel(params, "s", status.value);
+      setOrDel(params, "sort", sort.value);
+      history.replaceState(null, "", u.toString());
+    }
+    function setOrDel(params, key, val){
+      if (val && val.toString().trim() !== "") params.set(key, val);
+      else params.delete(key);
+    }
+
+    function escapeHtml(str){
+      return (str ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // events
+    [q, gender, status, sort].forEach(el => {
+      el.addEventListener("input", () => { writeToUrl(); render(); });
+      el.addEventListener("change", () => { writeToUrl(); render(); });
+    });
+
+    reset.addEventListener("click", () => {
+      q.value = ""; gender.value = ""; status.value = ""; sort.value = "name";
+      writeToUrl(); render();
+    });
+
+    copyLink.addEventListener("click", async () => {
+      try{
+        await navigator.clipboard.writeText(location.href);
+        copyLink.textContent = "コピーしました";
+        setTimeout(()=> copyLink.textContent = "この条件のリンクをコピー", 1200);
+      }catch{
+        alert("コピーできませんでした。URLを手動でコピーしてください。");
+      }
+    });
+
+    closeModal.addEventListener("click", close);
+    modalBack.addEventListener("click", (e) => { if (e.target === modalBack) close(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+
+    // init
+    loadFromUrl();
+    render();
+  </script>
+</body>
+</html>
